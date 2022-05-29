@@ -27,6 +27,21 @@ object SharedPrefManager {
         editor.putBoolean(KEY_SEARCH_HISTORY_MODE, isActivated)
         editor.apply()
     }
+    //검색 목록을 저장
+    fun storeSearchHistoryList(searchHistoryList: MutableList<SearchData>){
+        Log.d(TAG, "SharedPrefManager - storeSearchHistoryList() called")
+
+        //매개변수로 들어온 배열을 -> 문자열로 변환
+        val searchHistoryListString : String = Gson().toJson(searchHistoryList)
+        Log.d(TAG, "SharedPrefManager - searchHistoryListString : $searchHistoryListString")
+
+        //쉐어드 가져오기
+        val shared = App.instance.getSharedPreferences(SHARED_SEARCH_HISTORY, Context.MODE_PRIVATE)
+        val editor = shared.edit()
+        editor.putString(KEY_SEARCH_HISTORY, searchHistoryListString)
+        editor.apply()
+    }
+
 
     //검색어 저장 모드 확인하기
     fun checkSearchHistoryMode(): Boolean {

@@ -3,6 +3,10 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/Boo/AndroidStudioProjects/SampleRxJava/app/src/main/res/layout/activity_main.xml" value="0.20364583333333333" />
+        <entry key="..\:/Users/Boo/AndroidStudioProjects/SampleRxJava/app/src/main/res/layout/activity_photo_collection.xml" value="0.20364583333333333" />
+        <entry key="..\:/Users/Boo/AndroidStudioProjects/SampleRxJava/app/src/main/res/layout/layout_search_item.xml" value="0.20364583333333333" />
+        <entry key="..\:/Users/Boo/AndroidStudioProjects/SampleRxJava/app/src/main/res/menu/top_app_bar_menu.xml" value="0.20364583333333333" />
         <entry key="..\:/Users/N/AndroidStudioProjects/SampleRxJava/app/src/main/res/drawable-v24/ic_baseline_add_24.xml" value="0.249" />
         <entry key="..\:/Users/N/AndroidStudioProjects/SampleRxJava/app/src/main/res/drawable-v24/rounded_bg_pink.xml" value="0.249" />
         <entry key="..\:/Users/N/AndroidStudioProjects/SampleRxJava/app/src/main/res/drawable/ic_baseline_add_24.xml" value="0.249" />

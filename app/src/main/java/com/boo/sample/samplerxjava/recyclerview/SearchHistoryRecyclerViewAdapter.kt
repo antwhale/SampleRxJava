@@ -34,4 +34,8 @@ class SearchHistoryRecyclerViewAdapter(searchHistoryRecyclerViewInterface: ISear
     override fun getItemCount(): Int {
         return searchHistoryList.size
     }
+
+    fun submitList(searchHistoryList: ArrayList<SearchData>){
+        this.searchHistoryList = searchHistoryList
+    }
 }
