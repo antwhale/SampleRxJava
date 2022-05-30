@@ -11,6 +11,7 @@ import android.view.Menu
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.SearchView
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -44,14 +45,14 @@ class PhotoCollectionActivity : AppCompatActivity(),
     private lateinit var mySearchHistoryRecyclerViewAdapter: SearchHistoryRecyclerViewAdapter
 
     //서치뷰
-    private lateinit var mySearchView: SearchView
+    private lateinit var mySearchView: androidx.appcompat.widget.SearchView
 
     //서치뷰 에딧 텍스트
-    private lateinit var mySearchViewEditText: EditText
-    val top_app_bar = findViewById<MaterialToolbar>(R.id.top_app_bar)
+    private var mySearchViewEditText: EditText? = null
+    private val top_app_bar by lazy { findViewById<MaterialToolbar>(R.id.top_app_bar) }
 
-    override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
-        super.onCreate(savedInstanceState, persistentState)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_photo_collection)
 
         val bundle = intent.getBundleExtra("array_bundle")
@@ -72,6 +73,7 @@ class PhotoCollectionActivity : AppCompatActivity(),
         //액티비티에서 어떤 액션바를 사용할지 설정한다.
 
         top_app_bar.title = searchTerm
+        setSupportActionBar(top_app_bar)
 
         photoList = bundle?.getSerializable("photo_array_list") as ArrayList<Photo>
 
@@ -139,7 +141,21 @@ class PhotoCollectionActivity : AppCompatActivity(),
         this.mySearchView.apply {
             this.queryHint = "검색어를 입력해주세요"
             this.setOnQueryTextListener(this@PhotoCollectionActivity)
-            this.setOnQueryTextFocusChangeListener{ _, hasExpaned ->
+            this.setOnQueryTextFocusChangeListener { view, b ->
+                val linear_search_history_view = findViewById<LinearLayout>(R.id.linear_search_history_view)
+                when(b){
+                    true -> {
+                        Log.d(TAG, "서치뷰 열림")
+                        linear_search_history_view.visibility = View.VISIBLE
+                    }
+                    false -> {
+                        Log.d(TAG, "서치뷰 닫힘")
+                        linear_search_history_view.visibility = View.INVISIBLE
+                    }
+                }
+            }
+
+            /*{ _, hasExpaned ->
                 val linear_search_history_view = findViewById<LinearLayout>(R.id.linear_search_history_view)
                 when(hasExpaned){
                     true -> {
@@ -151,11 +167,12 @@ class PhotoCollectionActivity : AppCompatActivity(),
                         linear_search_history_view.visibility = View.INVISIBLE
                     }
                 }
-            }
+            }*/
+
             mySearchViewEditText = this.findViewById(androidx.appcompat.R.id.search_src_text)
         }
 
-        this.mySearchViewEditText.apply {
+        this.mySearchViewEditText?.apply {
             this.filters = arrayOf(InputFilter.LengthFilter(12))
             this.setTextColor(Color.WHITE)
             this.setHintTextColor(Color.WHITE)

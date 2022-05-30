@@ -20,7 +20,7 @@ object API {
     const val BASE_URL : String = "https://api.unsplash.com/"
 
     // 여러분꺼 하셔야됩니다!! ㅎㅎ;;
-    const val CLIENT_ID : String = "YS7sdqX2kuYBOifsupK1A-J2S4tkMveczqAQVOEBJMs"
+    const val CLIENT_ID : String = "uDHruO7K6f6n1VCLizMmW9frLJdwf8N7-c0bvUBU__0"
 
     const val SEARCH_PHOTOS : String = "search/photos"
     const val SEARCH_USERS : String = "search/users"
