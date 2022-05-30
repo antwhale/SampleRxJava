@@ -9,6 +9,7 @@ import android.text.InputFilter
 import android.util.Log
 import android.view.Menu
 import android.view.View
+import android.view.ViewGroup
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
@@ -27,6 +28,8 @@ import com.boo.sample.samplerxjava.utils.SharedPrefManager
 import com.boo.sample.samplerxjava.utils.toSimpleString
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.switchmaterial.SwitchMaterial
+import io.reactivex.rxjava3.disposables.CompositeDisposable
+import kotlinx.android.synthetic.main.activity_photo_collection.*
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -50,6 +53,9 @@ class PhotoCollectionActivity : AppCompatActivity(),
     //서치뷰 에딧 텍스트
     private var mySearchViewEditText: EditText? = null
     private val top_app_bar by lazy { findViewById<MaterialToolbar>(R.id.top_app_bar) }
+
+    //옵저버블 통합 제거를 위한 CompositeDisposable
+    private val myCompositeDisposable = CompositeDisposable()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -142,7 +148,7 @@ class PhotoCollectionActivity : AppCompatActivity(),
             this.queryHint = "검색어를 입력해주세요"
             this.setOnQueryTextListener(this@PhotoCollectionActivity)
             this.setOnQueryTextFocusChangeListener { view, b ->
-                val linear_search_history_view = findViewById<LinearLayout>(R.id.linear_search_history_view)
+                //val linear_search_history_view = findViewById<ViewGroup>(R.id.linear_search_history_view)
                 when(b){
                     true -> {
                         Log.d(TAG, "서치뷰 열림")
@@ -168,8 +174,11 @@ class PhotoCollectionActivity : AppCompatActivity(),
                     }
                 }
             }*/
-
+            //서치뷰에서 에딧텍스트를 가져온다.
             mySearchViewEditText = this.findViewById(androidx.appcompat.R.id.search_src_text)
+
+            //에딧텍스트 옵저버블
+            //val editTextChangeObservable = mySearchViewEditText.textChange
         }
 
         this.mySearchViewEditText?.apply {
@@ -205,6 +214,10 @@ class PhotoCollectionActivity : AppCompatActivity(),
             Toast.makeText(this, "검색어는 12자 까지만 입력 가능합니다.", Toast.LENGTH_SHORT).show()
         }
 
+        //여기서 바로바로 api호출하면 낭비!
+        /*if(userInputText.length in 1..12){
+            searchPhotoApiCall(userInputText)
+        }*/
         return true
     }
 
