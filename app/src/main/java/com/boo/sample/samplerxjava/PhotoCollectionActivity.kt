@@ -25,13 +25,23 @@ import com.boo.sample.samplerxjava.retrofit.RetrofitManager
 import com.boo.sample.samplerxjava.utils.Constants.TAG
 import com.boo.sample.samplerxjava.utils.RESPONSE_STATUS
 import com.boo.sample.samplerxjava.utils.SharedPrefManager
+import com.boo.sample.samplerxjava.utils.textChangesToFlow
 import com.boo.sample.samplerxjava.utils.toSimpleString
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.switchmaterial.SwitchMaterial
+import io.reactivex.rxjava3.core.Flowable.fromArray
+import io.reactivex.rxjava3.core.Observable.fromArray
+import io.reactivex.rxjava3.core.Observable.fromIterable
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.activity_photo_collection.*
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import java.util.*
 import kotlin.collections.ArrayList
+import kotlin.coroutines.CoroutineContext
 
 class PhotoCollectionActivity : AppCompatActivity(),
     SearchView.OnQueryTextListener,
@@ -54,8 +64,17 @@ class PhotoCollectionActivity : AppCompatActivity(),
     private var mySearchViewEditText: EditText? = null
     private val top_app_bar by lazy { findViewById<MaterialToolbar>(R.id.top_app_bar) }
 
+    private var myCoroutineJob : Job = Job()
+    private val myCoroutineContext : CoroutineContext
+    get() = Dispatchers.IO + myCoroutineJob
+
     //옵저버블 통합 제거를 위한 CompositeDisposable
-    private val myCompositeDisposable = CompositeDisposable()
+    //private val myCompositeDisposable = CompositeDisposable()
+    override fun onDestroy() {
+        //this.myCompositeDisposable.clear()
+        myCoroutineContext.cancel()
+        super.onDestroy()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -100,7 +119,6 @@ class PhotoCollectionActivity : AppCompatActivity(),
             val term = searchTerm ?: ""
             this.insertSearchTermHistory(term)
         }
-
     }
 
     //검색 기록 리사이클러뷰 준비
@@ -178,7 +196,21 @@ class PhotoCollectionActivity : AppCompatActivity(),
             mySearchViewEditText = this.findViewById(androidx.appcompat.R.id.search_src_text)
 
             //에딧텍스트 옵저버블
-            //val editTextChangeObservable = mySearchViewEditText.textChange
+            //val editTextChangeObservable = mySearchViewEditText.textChanges
+
+            //Rx의 스케줄러와 비슷
+            //IO 스레드에서 돌리겠따
+            GlobalScope.launch(context = myCoroutineContext) {
+                //editText가 변경되었을 때
+                val editTextFlow = mySearchViewEditText?.textChangesToFlow()
+
+                editTextFlow?.debounce(2000)
+                    ?.filter { it?.length!! > 0 }
+                ?.onEach {
+                    Log.d(TAG, "flow로 받는다 $it")
+                }
+                    ?.launchIn(this)
+            }
         }
 
         this.mySearchViewEditText?.apply {
